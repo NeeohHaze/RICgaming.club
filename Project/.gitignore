@@ -1,0 +1,25 @@
+#config files with secret keys
+config.js
+.env
+
+#Dependencies
+node_modules/
+package-lock.json
+
+#OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+#IDE Files
+.vscode/
+.idea/
+*.code-workspace
+
+#Logs 
+*.Logs
+npm-debug.log*
+
+#Build Output
+dist/
+build/

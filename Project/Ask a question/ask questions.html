@@ -428,7 +428,8 @@
 
     
    <script type="module">
-       const API_KEY = "AIzaSyDEMchzatyKTPihv2bXj7DZUsk1oypCMZw";
+       import { CONFIG } from "./config.js";
+       const API_KEY = CONFIG.API_KEY;
 
         const PREFERRED = [
             "gemini-2.5-flash",
