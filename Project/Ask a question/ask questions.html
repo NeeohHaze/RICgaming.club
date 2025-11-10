@@ -427,9 +427,13 @@
     </div>
 
     
-   <script type="module">
-       import { CONFIG } from "./config.js";
-       const API_KEY = CONFIG.API_KEY;
+    <!-- Load config before main script; non-module for wider compatibility -->
+    <script src="./config.js"></script>
+   <script>
+       const API_KEY = (window.CONFIG && window.CONFIG.API_KEY) || null;
+       if(!API_KEY || API_KEY === 'REPLACE_WITH_YOUR_API_KEY') {
+           console.warn('Missing or placeholder API key; chat will respond with local seed answers only.');
+       }
 
         const PREFERRED = [
             "gemini-2.5-flash",
@@ -526,20 +530,37 @@
         }
 
         async function generateAnswer(question) {
-            if (!resolvedModel) {
-                resolvedModel = await resolveModel();
-                console.log("Resolved model:", resolvedModel, "API:", apiVersion);
+            // If no API key, fall back to simple local matching on seedPairs.
+            if(!API_KEY) {
+                const lower = question.toLowerCase();
+                const found = seedPairs.find(([qq]) => qq.toLowerCase().includes(lower));
+                return found ? found[1] : "API key missing. Please provide a valid key in config.js.";
             }
-            const modelPath = toModelPath(resolvedModel);
+            if (!resolvedModel) {
+                try {
+                    resolvedModel = await resolveModel();
+                    console.log("Resolved model:", resolvedModel, "API:", apiVersion);
+                } catch (e) {
+                    console.error('Model resolution failed:', e);
+                    return "Unable to resolve model: " + e.message;
+                }
+            }
+            const modelPath = toModelPath(resolvedModel || 'gemini-1.5-flash');
             const url = `https://generativelanguage.googleapis.com/${apiVersion}/${modelPath}:generateContent?key=${API_KEY}`;
-            const r = await fetch(url, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    contents: buildContents(question),
-                    generationConfig: { maxOutputTokens: 512, temperature: 0.6 }
-                })
-            });
+            let r;
+            try {
+                r = await fetch(url, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        contents: buildContents(question),
+                        generationConfig: { maxOutputTokens: 512, temperature: 0.6 }
+                    })
+                });
+            } catch (networkErr) {
+                console.error('Network error:', networkErr);
+                return 'Network error contacting API: ' + networkErr.message;
+            }
             if (!r.ok) {
                 const txt = await r.text();
                 if (r.status === 404 && apiVersion === "v1") {
@@ -547,7 +568,7 @@
                     resolvedModel = null;
                     return generateAnswer(question);
                 }
-                throw new Error(`HTTP ${r.status}: ${txt}`);
+                return `API error (${r.status}): ${txt}`;
             }
             const data = await r.json();
             const cand = data.candidates?.[0];
@@ -613,10 +634,15 @@
             }
             input.addEventListener('input', autoresize);
 
-            // Resolve model and show system line
-                        resolveModel()
-                            .then(m => { resolvedModel = m; /* silently resolved model */ })
-                            .catch(e => { const { wrap } = createMsg('bot', `Model resolution error: ${e.message}`); messages.appendChild(wrap); scrollToBottom(messages); });
+            // Resolve model silently if API key present
+            if(API_KEY) {
+                resolveModel()
+                    .then(m => { resolvedModel = m; })
+                    .catch(e => { const { wrap } = createMsg('bot', `Model resolution error: ${e.message}`); messages.appendChild(wrap); scrollToBottom(messages); });
+            } else {
+                const { wrap } = createMsg('bot', 'No API key configured. Using basic local answers.');
+                messages.appendChild(wrap); scrollToBottom(messages);
+            }
 
             // Submit on Enter (not Shift+Enter)
             input.addEventListener('keydown', (e) => {
