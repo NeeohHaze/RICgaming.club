@@ -6,7 +6,7 @@
     <title>RIC Gaming</title>
 </head>
 <body>
-    <h1> <a href="Project/Home/home.html"> Click here to go to our website</a> </h1>
+    <h1> <a href="https://neeohhaze.github.io/RICgaming.club/Project/Home/home.html"> Click here to go to our website</a> </h1>
     
 </body>
 </html>

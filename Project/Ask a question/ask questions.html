@@ -605,19 +605,16 @@
             const input = document.getElementById('chatInput');
             const quickButtons = document.querySelectorAll('.quick-btn');
 
-            // Auto-resize textarea
             function autoresize(){
                 input.style.height = 'auto';
                 input.style.height = Math.min(input.scrollHeight, 120) + 'px';
             }
             input.addEventListener('input', autoresize);
 
-            // Resolve model and show system line
                         resolveModel()
-                            .then(m => { resolvedModel = m; /* silently resolved model */ })
+                            .then(m => { resolvedModel = m; })
                             .catch(e => { const { wrap } = createMsg('bot', `Model resolution error: ${e.message}`); messages.appendChild(wrap); scrollToBottom(messages); });
 
-            // Submit on Enter (not Shift+Enter)
             input.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
