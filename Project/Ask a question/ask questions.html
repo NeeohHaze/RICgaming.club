@@ -503,58 +503,30 @@
     </div>
 
     <script type="module">
-      import { CONFIG } from "./config.js";
-      const API_KEY = CONFIG.API_KEY;
+      // Load config dynamically so the page doesn't fail if the module import path changes on GitHub Pages
+      let API_KEY = "";
+      const loadConfig = (async () => {
+        try {
+          const mod = await import("./config.js");
+          API_KEY = (mod && mod.CONFIG && mod.CONFIG.API_KEY) || "";
+        } catch {
+          // Optional fallback if a non-module script defines window.CONFIG
+          API_KEY = (window.CONFIG && window.CONFIG.API_KEY) || "";
+        }
+      })();
 
-      const PREFERRED = [
-        "gemini-2.5-flash",
-        "gemini-2.0-flash",
-        "gemini-1.5-flash",
-        "gemini-1.5-pro",
+      // Try known model names directly instead of listing models first (more robust on static hosts)
+      const CANDIDATE_MODELS = [
+        "models/gemini-2.5-flash",
+        "models/gemini-2.0-flash",
+        "models/gemini-1.5-flash",
+        "models/gemini-1.5-pro",
       ];
 
-      let resolvedModel = null;
-      let apiVersion = "v1";
+      let apiVersion = "v1"; // will fall back to v1beta automatically on 404
 
-      function shortName(full) {
-        return full.startsWith("models/") ? full.slice(7) : full;
-      }
       function toModelPath(name) {
         return name.startsWith("models/") ? name : "models/" + name;
-      }
-
-      async function listModels(version) {
-        const url = `https://generativelanguage.googleapis.com/${version}/models?key=${API_KEY}`;
-        const r = await fetch(url);
-        if (!r.ok) throw new Error(`ListModels ${version} HTTP ${r.status}`);
-        const data = await r.json();
-        return (data.models || []).map((m) => ({
-          full: m.name,
-          short: shortName(m.name),
-          methods: m.supportedGenerationMethods || [],
-        }));
-      }
-
-      async function resolveModel() {
-        let models;
-        try {
-          models = await listModels("v1");
-          apiVersion = "v1";
-        } catch {
-          models = await listModels("v1beta");
-          apiVersion = "v1beta";
-        }
-        // Prefer ordered
-        for (const pref of PREFERRED) {
-          const found = models.find(
-            (m) => m.short === pref && m.methods.includes("generateContent")
-          );
-          if (found) return found.short;
-        }
-        // Any generateContent
-        const any = models.find((m) => m.methods.includes("generateContent"));
-        if (any) return any.short;
-        throw new Error("No accessible model with generateContent.");
       }
 
       const seedPairs = [
@@ -630,12 +602,7 @@
         return arr;
       }
 
-      async function generateAnswer(question) {
-        if (!resolvedModel) {
-          resolvedModel = await resolveModel();
-          console.log("Resolved model:", resolvedModel, "API:", apiVersion);
-        }
-        const modelPath = toModelPath(resolvedModel);
+      async function tryGenerate(question, modelPath) {
         const url = `https://generativelanguage.googleapis.com/${apiVersion}/${modelPath}:generateContent?key=${API_KEY}`;
         const r = await fetch(url, {
           method: "POST",
@@ -647,12 +614,7 @@
         });
         if (!r.ok) {
           const txt = await r.text();
-          if (r.status === 404 && apiVersion === "v1") {
-            apiVersion = "v1beta";
-            resolvedModel = null;
-            return generateAnswer(question);
-          }
-          throw new Error(`HTTP ${r.status}: ${txt}`);
+          return { ok: false, status: r.status, text: txt };
         }
         const data = await r.json();
         const cand = data.candidates?.[0];
@@ -661,9 +623,29 @@
             .map((p) => p.text || "")
             .join("")
             .trim() || "(Empty answer)";
-        dynamicTurns.push({ role: "user", parts: [{ text: question }] });
-        dynamicTurns.push({ role: "model", parts: [{ text: answer }] });
-        return answer;
+        return { ok: true, answer };
+      }
+
+      async function generateAnswer(question) {
+        if (!API_KEY) {
+          throw new Error("Missing API key (CONFIG.API_KEY). Make sure config.js is deployed.");
+        }
+        // Try v1 with each model, then v1beta with each model
+        for (const version of ["v1", "v1beta"]) {
+          apiVersion = version;
+          for (const m of CANDIDATE_MODELS) {
+            const modelPath = toModelPath(m);
+            const result = await tryGenerate(question, modelPath);
+            if (result.ok) {
+              dynamicTurns.push({ role: "user", parts: [{ text: question }] });
+              dynamicTurns.push({ role: "model", parts: [{ text: result.answer }] });
+              return result.answer;
+            }
+            // If 404, try next model or switch version; other statuses will continue to next candidate
+            if (result.status === 404) continue;
+          }
+        }
+        throw new Error("All model attempts failed. Please try again later.");
       }
 
       // --- Chat message rendering ---
@@ -711,11 +693,23 @@
         document.getElementById("sendBtn").disabled = disabled;
       }
 
-      (function init() {
+      function appendLog(msg, type = "info") {
+        const out = document.getElementById("consoleOutput");
+        if (!out) return;
+        const p = document.createElement("div");
+        p.textContent = `[${type}] ${msg}`;
+        p.style.color = type === "error" ? "#ffb4b4" : "#dbeafe";
+        out.appendChild(p);
+      }
+
+      (async function init() {
         const messages = document.getElementById("messages");
         const form = document.getElementById("chatForm");
         const input = document.getElementById("chatInput");
         const quickButtons = document.querySelectorAll(".quick-btn");
+
+        // Ensure config is loaded before first use
+        try { await loadConfig; } catch {}
 
         // Auto-resize textarea
         function autoresize() {
@@ -724,19 +718,14 @@
         }
         input.addEventListener("input", autoresize);
 
-        // Resolve model and show system line
-        resolveModel()
-          .then((m) => {
-            resolvedModel = m; /* silently resolved model */
-          })
-          .catch((e) => {
-            const { wrap } = createMsg(
-              "bot",
-              `Model resolution error: ${e.message}`
-            );
-            messages.appendChild(wrap);
-            scrollToBottom(messages);
-          });
+        // Basic environment check
+        if (!API_KEY) {
+          const { wrap } = createMsg(
+            "bot",
+            "Configuration error: missing API key. Ensure 'config.js' is uploaded to GitHub Pages alongside this page."
+          );
+          messages.appendChild(wrap);
+        }
 
         // Submit on Enter (not Shift+Enter)
         input.addEventListener("keydown", (e) => {
@@ -762,6 +751,7 @@
           } catch (err) {
             typing.bubble.textContent = `Error: ${err.message}`;
             typing.bubble.style.color = "red";
+            appendLog(err?.stack || String(err), "error");
           } finally {
             inFlight = false;
             setDisabled(false);
