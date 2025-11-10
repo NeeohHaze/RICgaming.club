@@ -103,37 +103,152 @@
         }
 
         .container {
-            width: 40%;
-            height: 500px;
+            width: min(900px, 95%);
+            height: 70vh;
             border-radius: 20px;
             background-color: #526379;
             display: flex;
             flex-direction: column;
-            margin-left: 400px;
+            margin: 16px auto;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+            overflow: hidden;
         }
 
-        .question-input {
-            width: 98%;
-            height: 40px;
-            padding: 4px;
-            margin-top: 6px;
-            border-radius: 20px;
+        /* Chat UI */
+        .chat-wrapper { /* inner layout */
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            background: linear-gradient(180deg, rgba(82,99,121,0.95), rgba(69,92,116,0.9));
         }
 
-        .answer-display {
-            width: 95%;
-            height: 500px;
-            padding: 10px;
+        .chat-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: #fff;
+            border-bottom: 1px solid rgba(255,255,255,0.12);
+            background: rgba(0,0,0,0.12);
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+        .chat-header .avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: #e8eef7;
+            color: #1e293b;
+            display: grid;
+            place-items: center;
+            font-size: 14px;
+            font-weight: 700;
+        }
+        .chat-title { font-weight: 700; letter-spacing: .3px; }
+        .chat-subtitle { font-size: 12px; opacity: .9; }
+
+        .messages {
+            flex: 1;
             overflow-y: auto;
-            scroll-behavior: auto;
-            display: block;
-            font-display: bold;
-
+            padding: 16px 16px 8px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
-        .answer {
-            margin-bottom: 10px;
+        .msg { display: flex; align-items: flex-end; gap: 8px; }
+        .msg.user { justify-content: flex-end; }
+        .msg.bot { justify-content: flex-start; }
+
+        .msg .avatar {
+            width: 28px; height: 28px; border-radius: 50%;
+            background: #e8eef7; color: #0f172a; display: grid; place-items: center;
+            font-size: 13px; font-weight: 700; flex: 0 0 28px;
         }
+        .msg.user .avatar { background: #4c7cf3; color: #fff; }
+
+        .bubble {
+            max-width: 70%;
+            padding: 10px 12px;
+            border-radius: 16px;
+            line-height: 1.45;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+        }
+        .msg.user .bubble {
+            background: #4c7cf3;
+            color: #fff;
+            border-bottom-right-radius: 6px;
+        }
+        .msg.bot .bubble {
+            background: #e8eef7;
+            color: #0f172a;
+            border-bottom-left-radius: 6px;
+        }
+        .timestamp { font-size: 11px; opacity: .8; margin-top: 4px; }
+
+        /* Quick question pills */
+        .quick-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 8px 16px 4px 16px;
+            background: rgba(0,0,0,0.08);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .quick-btn {
+            background: #314a62;
+            color: #fff;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 14px;
+            font-size: 12.5px;
+            cursor: pointer;
+            line-height: 1.2;
+            transition: background .18s, transform .18s;
+            letter-spacing: .3px;
+        }
+        .quick-btn:hover { background:#3f607f; }
+        .quick-btn:active { transform: scale(.95); }
+
+        .input-bar {
+            display: flex;
+            gap: 8px;
+            padding: 10px;
+            border-top: 1px solid rgba(255,255,255,0.12);
+            background: rgba(0,0,0,0.12);
+            position: sticky;
+            bottom: 0;
+        }
+        #chatInput {
+            flex: 1;
+            resize: none;
+            max-height: 120px;
+            min-height: 44px;
+            padding: 10px 12px;
+            border-radius: 12px;
+            border: none;
+            outline: none;
+            font-size: 15px;
+        }
+        #sendBtn {
+            background: #4c7cf3;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 0 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        #sendBtn[disabled], #chatInput[disabled] { opacity: .6; cursor: not-allowed; }
+
+        /* typing indicator */
+        .typing { display: inline-flex; gap: 4px; }
+        .typing span { width: 6px; height: 6px; background: #64748b; border-radius: 50%; display: inline-block; opacity: .6; animation: blink 1.2s infinite; }
+        .typing span:nth-child(2){ animation-delay: .15s; }
+        .typing span:nth-child(3){ animation-delay: .3s; }
+        @keyframes blink { 0%, 80%, 100% { transform: translateY(0); opacity: .4;} 40% { transform: translateY(-3px); opacity: 1; } }
 
         .intro {
             font-size: 15px;
@@ -146,15 +261,15 @@
         .active {
             color: #4d2545;
         }
-       @media screen and (max-width: 600px){
+        @media screen and (max-width: 600px){
             .container {
             width: 95%;
-            height: 500px;
+            height: 70vh;
             border-radius: 20px;
             background-color: #526379;
             display: flex;
             flex-direction: column;
-            margin-left: 10px;
+            margin: 16px auto;
             }
 
             .intro {
@@ -170,13 +285,13 @@
     }
     @media screen and (min-width: 1000px){
         .container {
-            width: 40%;
-            height: 500px;
+            width: min(900px, 80%);
+            height: 70vh;
             border-radius: 20px;
             background-color: #526379;
             display: flex;
             flex-direction: column;
-            margin-left: 400px;
+            margin: 16px auto;
         }
 
             .intro {
@@ -191,12 +306,12 @@
      @media screen and (min-width: 1024px){
         .container {
             width: 80%;
-            height: 500px;
+            height: 70vh;
             border-radius: 20px;
             background-color: #526379;
             display: flex;
             flex-direction: column;
-            margin-left: 50px;
+            margin: 16px auto;
         }
 
             .intro {
@@ -211,12 +326,12 @@
          @media screen and (min-width:762px) {
             .container {
                 width: 80%;
-                height: 500px;
+                height: 70vh;
                 border-radius: 20px;
                 background-color: #526379;
                 display: flex;
                 flex-direction: column;
-                margin-left: 50px;
+                margin: 16px auto;
             }
 
             .intro {
@@ -261,9 +376,25 @@
     </div>
 
     <div class="container">
-
-        <div class="answer-display" id="answerDisplay"></div>
-        <input type="text" class="question-input" placeholder="Type your question here" id="questionInput">
+        <div class="chat-wrapper" role="region" aria-label="Chat with RIC Bot">
+            <div class="chat-header">
+                <div class="avatar" aria-hidden="true">RB</div>
+                <div>
+                    <div class="chat-title">RIC Bot</div>
+                    <div class="chat-subtitle">Ask anything about RIC Gaming Club</div>
+                </div>
+            </div>
+            <div class="quick-actions" aria-label="Quick questions">
+                <button type="button" class="quick-btn" data-q="Members Of The Club">Members Of The Club</button>
+                <button type="button" class="quick-btn" data-q="Objectives">Objectives</button>
+                <button type="button" class="quick-btn" data-q="How to Join">How to Join</button>
+            </div>
+            <div id="messages" class="messages" aria-live="polite" aria-atomic="false"></div>
+            <form id="chatForm" class="input-bar" autocomplete="off">
+                <textarea id="chatInput" placeholder="Message RIC Bot... (Shift+Enter for new line)" rows="1" aria-label="Message input"></textarea>
+                <button id="sendBtn" type="submit" aria-label="Send message">Send</button>
+            </form>
+        </div>
     </div>
 
     <div id="consoleOutput"></div>
@@ -295,371 +426,235 @@
         <br>
     </div>
 
-    <script type="importmap">
-  {
-    "imports": {
-      "@google/generative-ai": "https://esm.run/@google/generative-ai"
-    }
-  }
-</script>
-    <script type="module">
-        import { GoogleGenerativeAI } from "@google/generative-ai";
+    
+   <script type="module">
+       const API_KEY = "AIzaSyDEMchzatyKTPihv2bXj7DZUsk1oypCMZw";
 
-        // Fetch your API_KEY 
-        const API_KEY = "AIzaSyCsdVjB6vvVERk6uewGbeqE5nQQtOJEX4I";
+        const PREFERRED = [
+            "gemini-2.5-flash",
+            "gemini-2.0-flash",
+            "gemini-1.5-flash",
+            "gemini-1.5-pro"
+        ];
 
-        // Access your API key (see "Set up your API key" above)
-        const genAI = new GoogleGenerativeAI(API_KEY);
+        let resolvedModel = null;
+        let apiVersion = "v1";
 
-        async function run() {
-            const questionInput = document.getElementById('questionInput');
-            const answerDisplay = document.getElementById('answerDisplay');
+        function shortName(full) {
+            return full.startsWith("models/") ? full.slice(7) : full;
+        }
+        function toModelPath(name) {
+            return name.startsWith("models/") ? name : "models/" + name;
+        }
 
-            // For text-only input, use the gemini-pro model
-            const model = genAI.getGenerativeModel({ model: "gemini-pro" });
-            
+        async function listModels(version) {
+            const url = `https://generativelanguage.googleapis.com/${version}/models?key=${API_KEY}`;
+            const r = await fetch(url);
+            if (!r.ok) throw new Error(`ListModels ${version} HTTP ${r.status}`);
+            const data = await r.json();
+            return (data.models || []).map(m => ({
+                full: m.name,
+                short: shortName(m.name),
+                methods: m.supportedGenerationMethods || []
+            }));
+        }
 
-            questionInput.addEventListener('keypress', async (event) => {
-                if (event.key === 'Enter') {
-                    const question = questionInput.value.trim();
-                    if (question !== '') {
-                        const chat = model.startChat({
-                            history: [
-                                {
-                                    role: "user",
-                                    parts: "Objective, What are the club's objectives? What is the objective of the club? Can You Tell Me about the club's objective?",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "The Objective of the gaming club is to provide a place to share your gaming hobbies comforably with each other. and also we aim to compete in esports tournaments if possible",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "Who are your members? Who are the members of the club? Who are the members of the gaming club?",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "Our Members are Thukha Minthwin, Htin Lynn Kyaw, Hein Thuya Win, TunBhone PyaeMoe, Phyo Thwe Thwe Kyaw, Thant Wai Yan Linn And Enes Talha Ciftci",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "Requirements, What are the requirements? What are the requirements to join the club?",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "There is pretty much no requirements needed to join our club. If you are interested in playing games and wants to share your interests with us then you are welcome to join",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "Who is the club's president? Who is the club's Vice President? President? Vice President?",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "Our Club's President is Thukha Minthwin from ICT(65) and Vice President is TunBhone PyaeMoe from ICT(65).",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "Schedule? What are the club's schedule? What is the meeting time? What time do you do usual meetup?",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "Our club's meeting time is every friday evening and it is not mandatory. We will meetup to just discuss our interests and discuss the projects that we intend to do with the club in the future",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "Place? where can I find club members? where do you meet? where is the meeting place?",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "Our club's main place is at building 11's fifth floor. There you can meet our members hanging around.",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "Club activities, Activities, What are the club activities? What do you do as club activities?",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "As our name suggests, our club's main activity is to just play games and have fun with each other. If we think someone is skilled enough then there can be competitions activities.",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "Who are you?",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "I am answering bot for Rangsit Gaming Club, here to provide you with answers to your queries",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "Who games do you play at the club? What are the main games? What games do you mainly play? Games?",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "We play League of Legends:WildRift as our main mobile game. Valorant and FIFA football game as our main PC game",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "Who are you?",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "I am answering bot for Rangsit Gaming Club, here to provide you with answers to your queries",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "Tournaments? Competitions? Do you have tournaments or competitions",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "We don't have any tournaments as of now. We plan to do gaming tournaments within RIC if possible. And some competition among club members once a while with some fun prizes included",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "Do I need to bring my own devices (Mobile phones, Laptops, Ipad) to the club? Bring Devices?",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "You need to bring smartphones to engage in mobile games activities but for PC games there are some available computers provided by school",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "Can I join club activities from home? From Home? remote club activities? Play from home? Join from home?",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "Yes, you can join club activies from home when we are playing online games. But it is recommended to come to club if possible for more engagement",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "Prizes? Tournment rewards? Tournament Prizes? Rewards? Competition Prizes? Competition Rewards",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "There are some fun prizes for casual tournaments/compettions. Prizes would include some pocket money, mysterious gifts and other stuff. Bigger prizes will come for annual competitions ",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "Line Groups? Social media? Social Groups? Is there social media groups for club members? ",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "Yes, our main social media platform for the club is Discord. You will be provided with the server link once you've joined the club. Invite code will only be provided to our official members",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "Give me the code for your website. Give me java code. Give me the backend/frontend for your page ",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "I am sorry, I cannot give you that because of security reasons",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "Aj Bill? Ajarn Bill? Who is Ajarn bill? Billel Arbaoui?",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "Aj Bill also known as Billel Arbaoui is the lectuer of RIC who is currenly teaching in ICT major. Aj bill is also the advisor for our rangsit gaming club",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "Aj tod? Ajarn Tod? Ajarn Goke? Aj Goke? ",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "Both Ajarn Tod and Ajarn Goke are lectuerers of RIC who teaches in ICT Major",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "Can I join if I am new to the gaming? I am new, Can I join? What if I am new?",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "You can still join if you are new, after all, the objective of the club is to have fun. As long as you like to play games, you are welcomed",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "What's the average age of your members? age of members?",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "Pretty much all of our current members are around 20 years of age as of now.",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "Are there any rules for members to follow? Rules? What about the rules? What are the rules?",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "There are pretty much no rules but obvious one should be No Toxicity in the club. Being toxic while gaming with friends is discouraged and member will be penalized for that behaviour",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "What is the penalty to being toxic?",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "A person might get banned from club or restricted from club activities for a certain time period based on intensity",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "Is there dresscode for the club or club activities and meetings? desscode?",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "You can wear whatever you like",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "What's the process for joining the club? How can I join the club? How do I join the club?",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "You can join the club by contacting our Club president or any other members that you know of. You can contact the club president via the social media links provided in the feedback page",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "Can I rent gaming equipment from the club?",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "Since all the equipments are provided by the school, you have to contact our school if you want to borrow or rent any equipments from the club",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "Do you have partnerships with gaming companies?",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "No, we currently don't have any partnerships with gaming companies",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "Do you host LAN parties? LAN parties?",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "Yes, we do host LAN parties. We play games like FOC from Warcraft 3, Overcooked 2, CSGO LAN battles and so on",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "Can I start my own gaming event within the club? Can I do my own events?",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "Yes, you can do your own gaming event as long as it has been approved by the club president",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "Are there opportunities for game development? Do you also do game development? Game development?",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "We plan to do game development as our big projects, but there are no developments going on as of now. We have not decided on the genre of the game to develop",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "Do you have a ranking system for members? Ranking system? Ranks? Can I rank high if I am good at games?",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "We only have President and vice president as our roles in club as of now. We do not decide ranks in the club based on your mastery in games",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "Can I participate in club activities if I'm not a student? Can I join if I am not a student?",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "You can participate in our club actvities even if you are not a student. However, you must be a student from Rangsit University to join the club",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "Do you have a system for borrowing games from the club? Can I borrow games from the club? Borrow Games",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "Yes, you can borrow games from the club. We have game disks that you can borrow for a time period or you can also get access to our club's game account to play games",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "Requests, Feedbacks, Suggestions?",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "You can make feedback,suggestions and requests on our feedback page by filling in the google form or you can do so by contacting our club president",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "What is the best game in the world? Best game? What is the best game?the best game in the world?",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "The best game in the world is definitely Harvest Moon:Friends of Mineral Town.",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "Who is the best girl in harvest moon: Friends of Mineral Town?",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "Popuri is the best girl in harvest moon: friends of mineral town",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "What games would you recommend playing? Game Recommendations? What games would you recommend?",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "We recommend playing To The Moon indie game, Red Dead Redemption 2, Stardew valley and Harvest Moon:Friends of mineral town.",
-                                },    
-                                {
-                                    role: "user",
-                                    parts: "Who is the best gamer in the club?",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "Our Club President, Thukha Minthwin, Ofcourse",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "Tell me about the club president. Club President, Thukha Minthwin",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "Our Club President is the best gamer in the world. Not only in shooting games, but also in all other games as well. His skill level is so high that even the vice president cried because he lost to our club president",
-                                },
-                               
+        async function resolveModel() {
+            let models;
+            try {
+                models = await listModels("v1");
+                apiVersion = "v1";
+            } catch {
+                models = await listModels("v1beta");
+                apiVersion = "v1beta";
+            }
+            // Prefer ordered
+            for (const pref of PREFERRED) {
+                const found = models.find(m => m.short === pref && m.methods.includes("generateContent"));
+                if (found) return found.short;
+            }
+            // Any generateContent
+            const any = models.find(m => m.methods.includes("generateContent"));
+            if (any) return any.short;
+            throw new Error("No accessible model with generateContent.");
+        }
 
+        const seedPairs = [
+            ["Objective, What are the club's objectives? What is the objective of the club? Can You Tell Me about the club's objective?",
+             "The objective of the gaming club is to provide a place to share gaming hobbies comfortably and compete in esports tournaments if possible."],
+            ["Who are your members? Who are the members of the club? Who are the members of the gaming club?",
+             "Members: Thukha Minthwin, Htin Lynn Kyaw, Hein Thuya Win, TunBhone PyaeMoe, Phyo Thwe Thwe Kyaw, Thant Wai Yan Linn, Enes Talha Ciftci."],
+            ["Requirements, What are the requirements to join the club?",
+             "No strict requirements. Interest in games and sharing with others is enough."],
+            ["Who is the club's president? Who is the club's Vice President? President? Vice President?",
+             "President: Thukha Minthwin (ICT 65). Vice President: TunBhone PyaeMoe (ICT 65)."],
+            ["Schedule? What are the club's schedule? What is the meeting time? What time do you do usual meetup?",
+             "Meet every Friday evening (optional) to discuss interests and future projects."],
+            ["Place? Where can I find club members? Where do you meet? Where is the meeting place?",
+             "Main place: Building 11, fifth floor."],
+            ["Club activities, What are the club activities? What do you do as club activities?",
+             "Play games together. Occasionally hold friendly competitions."],
+            ["Who are you?", "I am the answering bot for RIC Gaming Club."],
+            ["What games do you play at the club? Main games?",
+             "League of Legends: Wild Rift (mobile), Valorant and FIFA (PC)."],
+            ["Tournaments? Competitions?",
+             "No official tournaments yet. Planning internal events with fun prizes."],
+            ["Do I need to bring my own devices?",
+             "Bring your smartphone for mobile games. PCs are available at school for some games."],
+            ["Can I join club activities from home?",
+             "Yes, for online games. Physical presence recommended for engagement."],
+            ["Prizes? Tournament rewards?",
+             "Casual events may have small cash, mystery gifts. Bigger prizes planned later."],
+            ["Line Groups? Social media? Social groups?",
+             "Main platform: Discord. Invite given to official members."]
+        ];
+    const dynamicTurns = [];
+    let inFlight = false;
 
+        function buildContents(q) {
+            const arr = [];
+            seedPairs.forEach(([qq, aa]) => {
+                arr.push({ role: "user", parts: [{ text: qq }] });
+                arr.push({ role: "model", parts: [{ text: aa }] });
+            });
+            dynamicTurns.forEach(t => arr.push(t));
+            arr.push({ role: "user", parts: [{ text: q }] });
+            return arr;
+        }
 
-
-
-                            ],
-                            generationConfig: {
-                                maxOutputTokens: 25000,
-                            },
-                        });
-                        const result = await chat.sendMessage(question);
-                        const response = await result.response;
-                        const answer = await response.text();
-
-                        const answerElement = document.createElement('p');
-                        answerElement.textContent = answer;
-                        answerElement.classList.add('answer');
-
-                        answerDisplay.appendChild(answerElement);
-
-                        questionInput.value = ''; // Clear input after asking
-
-
-                    }
+        async function generateAnswer(question) {
+            if (!resolvedModel) {
+                resolvedModel = await resolveModel();
+                console.log("Resolved model:", resolvedModel, "API:", apiVersion);
+            }
+            const modelPath = toModelPath(resolvedModel);
+            const url = `https://generativelanguage.googleapis.com/${apiVersion}/${modelPath}:generateContent?key=${API_KEY}`;
+            const r = await fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    contents: buildContents(question),
+                    generationConfig: { maxOutputTokens: 512, temperature: 0.6 }
+                })
+            });
+            if (!r.ok) {
+                const txt = await r.text();
+                if (r.status === 404 && apiVersion === "v1") {
+                    apiVersion = "v1beta";
+                    resolvedModel = null;
+                    return generateAnswer(question);
                 }
-            })
-        };
+                throw new Error(`HTTP ${r.status}: ${txt}`);
+            }
+            const data = await r.json();
+            const cand = data.candidates?.[0];
+            const answer = (cand?.content?.parts || []).map(p => p.text || "").join("").trim() || "(Empty answer)";
+            dynamicTurns.push({ role: "user", parts: [{ text: question }] });
+            dynamicTurns.push({ role: "model", parts: [{ text: answer }] });
+            return answer;
+        }
 
+        // --- Chat message rendering ---
+        function scrollToBottom(el){ el.scrollTop = el.scrollHeight; }
 
-        run();
+        function createMsg(role, content){
+            const wrap = document.createElement('div');
+            wrap.className = `msg ${role}`;
+
+            const avatar = document.createElement('div');
+            avatar.className = 'avatar';
+            avatar.textContent = role === 'user' ? 'You' : 'RB';
+
+            const bubble = document.createElement('div');
+            bubble.className = 'bubble';
+            bubble.textContent = content;
+
+            if (role === 'user') {
+                // user: bubble then avatar (right aligned)
+                wrap.appendChild(bubble);
+                wrap.appendChild(avatar);
+            } else {
+                // bot: avatar then bubble (left aligned)
+                wrap.appendChild(avatar);
+                wrap.appendChild(bubble);
+            }
+            return { wrap, bubble };
+        }
+
+        function showTyping(container){
+            const { wrap, bubble } = createMsg('bot', '');
+            const dots = document.createElement('div');
+            dots.className = 'typing';
+            dots.innerHTML = '<span></span><span></span><span></span>';
+            bubble.appendChild(dots);
+            container.appendChild(wrap);
+            scrollToBottom(container);
+            return { wrap, bubble };
+        }
+
+        function setDisabled(disabled){
+            document.getElementById('chatInput').disabled = disabled;
+            document.getElementById('sendBtn').disabled = disabled;
+        }
+
+        (function init() {
+            const messages = document.getElementById('messages');
+            const form = document.getElementById('chatForm');
+            const input = document.getElementById('chatInput');
+            const quickButtons = document.querySelectorAll('.quick-btn');
+
+            // Auto-resize textarea
+            function autoresize(){
+                input.style.height = 'auto';
+                input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+            }
+            input.addEventListener('input', autoresize);
+
+            // Resolve model and show system line
+                        resolveModel()
+                            .then(m => { resolvedModel = m; /* silently resolved model */ })
+                            .catch(e => { const { wrap } = createMsg('bot', `Model resolution error: ${e.message}`); messages.appendChild(wrap); scrollToBottom(messages); });
+
+            // Submit on Enter (not Shift+Enter)
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    form.requestSubmit();
+                }
+            });
+
+            async function sendQuestion(q){
+                if (!q || inFlight) return;
+                inFlight = true; setDisabled(true);
+                const userMsg = createMsg('user', q);
+                messages.appendChild(userMsg.wrap);
+                scrollToBottom(messages);
+                input.value = '';
+                autoresize();
+                const typing = showTyping(messages);
+                try {
+                    const ans = await generateAnswer(q);
+                    typing.bubble.textContent = ans;
+                } catch (err) {
+                    typing.bubble.textContent = `Error: ${err.message}`;
+                    typing.bubble.style.color = 'red';
+                } finally {
+                    inFlight = false; setDisabled(false); input.focus();
+                }
+            }
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                sendQuestion(input.value.trim());
+            });
+
+            quickButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const q = btn.getAttribute('data-q');
+                    sendQuestion(q);
+                });
+            });
+        })();
     </script>
 
 </body>

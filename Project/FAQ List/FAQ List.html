@@ -96,32 +96,29 @@
 
     .container_1 {
       background-color: gray;
-      margin-left: 40px;
-      margin-right: 750px;
-      margin-bottom: 20px;
+      margin: 20px auto;
       border: 0.5px solid #0567AB;
       padding: 5px;
       border-radius: 13px;
+      width: min(900px, calc(100% - 40px));
     }
 
     .container_2 {
       background-color: gray;
-      margin-left: 40px;
-      margin-right: 750px;
-      margin-bottom: 20px;
+      margin: 20px auto;
       border: 0.5px solid #0567AB;
       padding: 5px;
       border-radius: 13px;
+      width: min(900px, calc(100% - 40px));
     }
 
     .container_3 {
       background-color: gray;
-      margin-left: 40px;
-      margin-right: 750px;
-      margin-bottom: 20px;
+      margin: 20px auto;
       border: 0.5px solid #0567AB;
       padding: 5px;
       border-radius: 13px;
+      width: min(900px, calc(100% - 40px));
     }
 
     .panel {
@@ -169,35 +166,9 @@
     .act:after {
       content: "\2B9D";
     }
-     @media screen and (min-width:390px){
-      .container_1 {
-      background-color: gray;
-      margin-left: 20px;
-      margin-bottom: 20px;
-      border: 0.5px solid #0567AB;
-      padding: 5px;
-      border-radius: 13px;
-      width: 90%;
+     @media screen and (max-width: 480px){
+      .container_1, .container_2, .container_3 { width: calc(100% - 24px); margin: 12px auto; }
      }
-     .container_2 {
-      background-color: gray;
-      margin-left: 20px;
-      margin-bottom: 20px;
-      border: 0.5px solid #0567AB;
-      padding: 5px;
-      border-radius: 13px;
-      width: 90%;
-    }
-    .container_3 {
-      background-color: gray;
-      margin-left: 20px;
-      margin-bottom: 20px;
-      border: 0.5px solid #0567AB;
-      padding: 5px;
-      border-radius: 13px;
-      width: 90%;
-    }
-  }
   </style>
 </head>
 

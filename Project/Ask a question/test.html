@@ -212,180 +212,81 @@
     <script type="importmap">
   {
     "imports": {
-      "@google/generative-ai": "https://esm.run/@google/generative-ai"
+      "@google/generative-ai": "https://esm.run/@google/generative-ai@latest"
     }
   }
 </script>
     <script type="module">
         import { GoogleGenerativeAI } from "@google/generative-ai";
 
-        // Fetch your API_KEY 
-        const API_KEY = "AIzaSyCsdVjB6vvVERk6uewGbeqE5nQQtOJEX4I";
-
-        // Access your API key (see "Set up your API key" above)
+        const API_KEY = "AIzaSyDEMchzatyKTPihv2bXj7DZUsk1oypCMZw";
         const genAI = new GoogleGenerativeAI(API_KEY);
 
         async function run() {
             const questionInput = document.getElementById('questionInput');
             const answerDisplay = document.getElementById('answerDisplay');
 
-            // For text-only input, use the gemini-pro model
-            const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+            // Use a supported model
+            const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-            questionInput.addEventListener('keypress', async (event) => {
+            questionInput.addEventListener('keydown', async (event) => {
                 if (event.key === 'Enter') {
                     const question = questionInput.value.trim();
-                    if (question !== '') {
+                    if (!question) return;
+
+                    try {
                         const chat = model.startChat({
                             history: [
-                                {
-                                    role: "user",
-                                    parts: "Objective, What are the club's objectives? What is the objective of the club? Can You Tell Me about the club's objective?",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "The Objective of the gaming club is to provide a place to share your gaming hobbies comforably with each other. and also we aim to compete in esports tournaments if possible",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "Who are your members? Who are the members of the club? Who are the members of the gaming club?",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "Our Members are Thukha Minthwin, Htin Lynn Kyaw, Hein Thuya Win, TunBhone PyaeMoe, Phyo Thwe Thwe Kyaw, Thant Wai Yan Linn And Enes Talha Ciftci",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "Requirements, What are the requirements? What are the requirements to join the club?",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "There is pretty much no requirements needed to join our club. If you are interested in playing games and wants to share your interests with us then you are welcome to join",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "Who is the club's president? Who is the club's Vice President? President? Vice President?",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "Our Club's President is Thukha Minthwin from ICT(65) and Vice President is TunBhone PyaeMoe from ICT(65).",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "Schedule? What are the club's schedule? What is the meeting time? What time do you do usual meetup?",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "Our club's meeting time is every friday evening and it is not mandatory. We will meetup to just discuss our interests and discuss the projects that we intend to do with the club in the future",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "Place? where can I find club members? where do you meet? where is the meeting place?",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "Our club's main place is at building 11's fifth floor. There you can meet our members hanging around.",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "Club activities, Activities, What are the club activities? What do you do as club activities?",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "As our name suggests, our club's main activity is to just play games and have fun with each other. If we think someone is skilled enough then there can be competitions activities.",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "Who are you?",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "I am answering bot for Rangsit Gaming Club, here to provide you with answers to your queries",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "Who games do you play at the club? What are the main games? What games do you mainly play? Games?",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "We play League of Legends:WildRift as our main mobile game. Valorant and FIFA football game as our main PC game",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "Who are you?",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "I am answering bot for Rangsit Gaming Club, here to provide you with answers to your queries",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "Tournaments? Competitions? Do you have tournaments or competitions",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "We don't have any tournaments as of now. We plan to do gaming tournaments within RIC if possible. And some competition among club members once a while with some fun prizes included",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "Do I need to bring my own devices (Mobile phones, Laptops, Ipad) to the club? Bring Devices?",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "You need to bring smartphones to engage in mobile games activities but for PC games there are some available computers provided by school",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "Can I join club activities from home? From Home? remote club activities? Play from home? Join from home?",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "Yes, you can join club activies from home when we are playing online games. But it is recommended to come to club if possible for more engagement",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "Prizes? Tournment rewards? Tournament Prizes? Rewards? Competition Prizes? Competition Rewards",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "There are some fun prizes for casual tournaments/compettions. Prizes would include some pocket money, mysterious gifts and other stuff. Bigger prizes will come for annual competitions ",
-                                },
-                                {
-                                    role: "user",
-                                    parts: "Line Groups? Social media? Social Groups? Is there social media groups for club members? ",
-                                },
-                                {
-                                    role: "model",
-                                    parts: "Yes, our main social media platform for the club is Discord. You will be provided with the server link once you've joined the club. Invite code will only be provided to our official members",
-                                },
-
-
-
-
+                                { role: "user", parts: [{ text: "Objective, What are the club's objectives? What is the objective of the club? Can You Tell Me about the club's objective?" }] },
+                                { role: "model", parts: [{ text: "The objective of the gaming club is to provide a place to share gaming hobbies comfortably and compete in esports tournaments if possible." }] },
+                                { role: "user", parts: [{ text: "Who are your members? Who are the members of the club? Who are the members of the gaming club?" }] },
+                                { role: "model", parts: [{ text: "Members: Thukha Minthwin, Htin Lynn Kyaw, Hein Thuya Win, TunBhone PyaeMoe, Phyo Thwe Thwe Kyaw, Thant Wai Yan Linn, Enes Talha Ciftci." }] },
+                                { role: "user", parts: [{ text: "Requirements, What are the requirements to join the club?" }] },
+                                { role: "model", parts: [{ text: "No strict requirements. Interest in games and sharing with others is enough." }] },
+                                { role: "user", parts: [{ text: "Who is the club's president? Who is the club's Vice President? President? Vice President?" }] },
+                                { role: "model", parts: [{ text: "President: Thukha Minthwin (ICT 65). Vice President: TunBhone PyaeMoe (ICT 65)." }] },
+                                { role: "user", parts: [{ text: "Schedule? What are the club's schedule? What is the meeting time? What time do you do usual meetup?" }] },
+                                { role: "model", parts: [{ text: "Meet every Friday evening (optional) to discuss interests and future projects." }] },
+                                { role: "user", parts: [{ text: "Place? Where can I find club members? Where do you meet? Where is the meeting place?" }] },
+                                { role: "model", parts: [{ text: "Main place: Building 11, fifth floor." }] },
+                                { role: "user", parts: [{ text: "Club activities, What are the club activities? What do you do as club activities?" }] },
+                                { role: "model", parts: [{ text: "Play games together. Occasionally hold friendly competitions." }] },
+                                { role: "user", parts: [{ text: "Who are you?" }] },
+                                { role: "model", parts: [{ text: "I am the answering bot for Rangsit Gaming Club." }] },
+                                { role: "user", parts: [{ text: "What games do you play at the club? Main games?" }] },
+                                { role: "model", parts: [{ text: "League of Legends: Wild Rift (mobile), Valorant and FIFA (PC)." }] },
+                                { role: "user", parts: [{ text: "Tournaments? Competitions?" }] },
+                                { role: "model", parts: [{ text: "No official tournaments yet. Planning internal events with fun prizes." }] },
+                                { role: "user", parts: [{ text: "Do I need to bring my own devices?" }] },
+                                { role: "model", parts: [{ text: "Bring your smartphone for mobile games. PCs are available at school for some games." }] },
+                                { role: "user", parts: [{ text: "Can I join club activities from home?" }] },
+                                { role: "model", parts: [{ text: "Yes, for online games. Physical presence recommended for engagement." }] },
+                                { role: "user", parts: [{ text: "Prizes? Tournament rewards?" }] },
+                                { role: "model", parts: [{ text: "Casual events may have small cash, mystery gifts. Bigger prizes planned later." }] },
+                                { role: "user", parts: [{ text: "Line Groups? Social media? Social groups?" }] },
+                                { role: "model", parts: [{ text: "Main platform: Discord. Invite given to official members." }] }
                             ],
-                            generationConfig: {
-                                maxOutputTokens: 25000,
-                            },
+                            generationConfig: { maxOutputTokens: 512 }
                         });
+
                         const result = await chat.sendMessage(question);
                         const response = await result.response;
-                        const answer = await response.text();
+                        const answer = response.text();
 
-                        const answerElement = document.createElement('p');
-                        answerElement.textContent = answer;
-                        answerElement.classList.add('answer');
-
-                        answerDisplay.appendChild(answerElement);
-
-                        questionInput.value = ''; // Clear input after asking
-
-
+                        const p = document.createElement('p');
+                        p.textContent = answer;
+                        p.className = 'answer';
+                        answerDisplay.appendChild(p);
+                        questionInput.value = '';
+                    } catch (err) {
+                        const p = document.createElement('p');
+                        p.textContent = "Error: " + err.message;
+                        p.style.color = 'red';
+                        answerDisplay.appendChild(p);
                     }
                 }
-            })
-        };
-
-
+            });
+        }
         run();
     </script>
 

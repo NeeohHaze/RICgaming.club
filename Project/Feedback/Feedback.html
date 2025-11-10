@@ -82,16 +82,17 @@
         }
 
         .container {
-            width: 480px;
-            height: 365px;
+            width: min(600px, 95%);
+            height: auto;
             border-radius: 20px;
             background-color: #cccccc;
-            margin-left: 510px;
-            margin-top: 35px;
+            margin: 24px auto;
+            padding: 20px 16px;
             display: flex;
             flex-direction: row;
             align-items: center;
             justify-content: center;
+            gap: 24px;
         }
 
         .logo {
@@ -113,21 +114,29 @@
         }
 
         #survey {
-            margin-left: 630px;
+            display: block; /* full-width formatting context */
+            width: fit-content; /* shrink to content */
             border-radius: 20px;
             background-color: #cccccc;
-            padding: 20px;
+            padding: 12px 16px;
+            margin: 32px auto; /* center horizontally and add vertical space */
+            text-align: center;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            transition: background .25s, transform .25s;
         }
+        #survey:hover { background:#d4d4d4; transform: translateY(-2px); }
 
         #emojirate {
             background: #cccccc;
             border-radius: 20px;
-            width: 480px;
-            margin-left: 510px;
+            width: min(600px, 95%);
+            margin: 8px auto 0;
             align-items: center;
             display: flex;
             flex-direction: column;
-            height: 120px;
+            padding: 12px 0;
+            height: auto;
         }
 
         #emo:focus {
@@ -180,52 +189,20 @@
             color: #4d2545;
         }
         @media screen and (max-width: 600px){
-            .container {
-            width: 95%;
-            height: 365px;
-            border-radius: 20px;
-            background-color: #cccccc;
-            margin-left: 20px;
-            margin-top: 35px;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: center;
-        }
-        #survey {
-            margin-left: 70px;
-            border-radius: 20px;
-            background-color: #cccccc;
-            padding: 20px;
-        }
+            .container { width: 95%; margin: 16px auto; padding: 16px; gap: 16px; }
+            #survey { margin: 32px auto; }
         h3 {
             font-size: 15px;
         }
         .contain {
             display: flex;
-            flex-wrap: 100%;
+            flex-wrap: wrap;
             
         }
         }
           @media screen and (min-width:762px) {
-            .container {
-            width: 95%;
-            height: 365px;
-            border-radius: 20px;
-            background-color: #cccccc;
-            margin-left: 20px;
-            margin-top: 35px;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: center;
-        }
-        #survey {
-            margin-left: 280px;
-            border-radius: 20px;
-            background-color: #cccccc;
-            padding: 20px;
-        }
+            .container { width: 95%; margin: 16px auto; padding: 16px; gap: 16px; }
+            #survey { margin: 40px auto; }
         h3 {
             font-size: 15px;
         }
@@ -237,21 +214,11 @@
             
         }
            @media screen and (min-width: 1000px) {
-            #survey {
-            margin-left: 670px;
-            border-radius: 20px;
-            background-color: #cccccc;
-            padding: 20px;
-        }
+            #survey { margin: 40px auto; }
         }
 
         @media screen and (min-width: 1024px) {
-            #survey {
-            margin-left: 670px;
-            border-radius: 20px;
-            background-color: #cccccc;
-            padding: 20px;
-        }
+            #survey { margin: 12px auto; }
     }
         
     </style>
