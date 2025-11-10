@@ -1,25 +1,25 @@
-#config files with secret keys
+# Config files with secrets
 config.js
 .env
 
-#Dependencies
+# Dependencies
 node_modules/
 package-lock.json
 
-#OS files
+# OS files
 .DS_Store
 Thumbs.db
 desktop.ini
 
-#IDE Files
+# IDE files
 .vscode/
 .idea/
 *.code-workspace
 
-#Logs 
-*.Logs
+# Logs
+*.log
 npm-debug.log*
 
-#Build Output
+# Build output
 dist/
 build/

@@ -1,691 +1,786 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GPT Q&A</title>
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background-image: linear-gradient(to bottom, #002142, #461437);
+      body {
+        margin: 0;
+        padding: 0;
+        background-image: linear-gradient(to bottom, #002142, #461437);
+      }
+
+      ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background-color: #fd1d1d;
+        background: #455c74;
+        box-shadow: inset;
+        box-shadow: -6px -15px 15px -3px rgba(0, 128, 255, 0.164);
+        height: auto;
+      }
+
+      .title {
+        color: white;
+      }
+
+      li {
+        float: right;
+      }
+
+      .RSUlogo {
+        width: 35px;
+        height: 35px;
+        opacity: 1;
+        float: left;
+        display: flex;
+        text-align: center;
+        margin-top: 15px;
+        margin-left: 20px;
+        text-decoration: none;
+      }
+
+      .RSU {
+        float: left;
+        color: white;
+        font-style: inherit;
+        font-size: larger;
+        display: block;
+        text-align: center;
+        padding: 10px;
+        text-decoration: none;
+      }
+
+      li a {
+        display: block;
+        color: white;
+        text-align: center;
+        padding: 14px 16px;
+        text-decoration: none;
+      }
+
+      li a:hover {
+        color: #4d2545;
+      }
+
+      h1 {
+        color: White;
+        margin-left: 30px;
+      }
+
+      h4 {
+        color: white;
+        margin-left: 30px;
+      }
+
+      .footer {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 3px;
+        background-image: linear-gradient(to bottom, #61204d, #581945);
+      }
+
+      .foterImg {
+        display: flex;
+        align-items: center;
+        gap: 50px;
+      }
+
+      .footerword {
+        color: white;
+      }
+
+      .highlight {
+        color: green;
+      }
+
+      .container {
+        width: min(900px, 95%);
+        height: 70vh;
+        border-radius: 20px;
+        background-color: #526379;
+        display: flex;
+        flex-direction: column;
+        margin: 16px auto;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+        overflow: hidden;
+      }
+
+      /* Chat UI */
+      .chat-wrapper {
+        /* inner layout */
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        background: linear-gradient(
+          180deg,
+          rgba(82, 99, 121, 0.95),
+          rgba(69, 92, 116, 0.9)
+        );
+      }
+
+      .chat-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 16px;
+        color: #fff;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(0, 0, 0, 0.12);
+        position: sticky;
+        top: 0;
+        z-index: 2;
+      }
+      .chat-header .avatar {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: #e8eef7;
+        color: #1e293b;
+        display: grid;
+        place-items: center;
+        font-size: 14px;
+        font-weight: 700;
+      }
+      .chat-title {
+        font-weight: 700;
+        letter-spacing: 0.3px;
+      }
+      .chat-subtitle {
+        font-size: 12px;
+        opacity: 0.9;
+      }
+
+      .messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 16px 16px 8px 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .msg {
+        display: flex;
+        align-items: flex-end;
+        gap: 8px;
+      }
+      .msg.user {
+        justify-content: flex-end;
+      }
+      .msg.bot {
+        justify-content: flex-start;
+      }
+
+      .msg .avatar {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: #e8eef7;
+        color: #0f172a;
+        display: grid;
+        place-items: center;
+        font-size: 13px;
+        font-weight: 700;
+        flex: 0 0 28px;
+      }
+      .msg.user .avatar {
+        background: #4c7cf3;
+        color: #fff;
+      }
+
+      .bubble {
+        max-width: 70%;
+        padding: 10px 12px;
+        border-radius: 16px;
+        line-height: 1.45;
+        word-wrap: break-word;
+        white-space: pre-wrap;
+      }
+      .msg.user .bubble {
+        background: #4c7cf3;
+        color: #fff;
+        border-bottom-right-radius: 6px;
+      }
+      .msg.bot .bubble {
+        background: #e8eef7;
+        color: #0f172a;
+        border-bottom-left-radius: 6px;
+      }
+      .timestamp {
+        font-size: 11px;
+        opacity: 0.8;
+        margin-top: 4px;
+      }
+
+      /* Quick question pills */
+      .quick-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 8px 16px 4px 16px;
+        background: rgba(0, 0, 0, 0.08);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      .quick-btn {
+        background: #314a62;
+        color: #fff;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 14px;
+        font-size: 12.5px;
+        cursor: pointer;
+        line-height: 1.2;
+        transition: background 0.18s, transform 0.18s;
+        letter-spacing: 0.3px;
+      }
+      .quick-btn:hover {
+        background: #3f607f;
+      }
+      .quick-btn:active {
+        transform: scale(0.95);
+      }
+
+      .input-bar {
+        display: flex;
+        gap: 8px;
+        padding: 10px;
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(0, 0, 0, 0.12);
+        position: sticky;
+        bottom: 0;
+      }
+      #chatInput {
+        flex: 1;
+        resize: none;
+        max-height: 120px;
+        min-height: 44px;
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: none;
+        outline: none;
+        font-size: 15px;
+      }
+      #sendBtn {
+        background: #4c7cf3;
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        padding: 0 14px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      #sendBtn[disabled],
+      #chatInput[disabled] {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      /* typing indicator */
+      .typing {
+        display: inline-flex;
+        gap: 4px;
+      }
+      .typing span {
+        width: 6px;
+        height: 6px;
+        background: #64748b;
+        border-radius: 50%;
+        display: inline-block;
+        opacity: 0.6;
+        animation: blink 1.2s infinite;
+      }
+      .typing span:nth-child(2) {
+        animation-delay: 0.15s;
+      }
+      .typing span:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+      @keyframes blink {
+        0%,
+        80%,
+        100% {
+          transform: translateY(0);
+          opacity: 0.4;
         }
-
-        ul {
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            background-color: #fd1d1d;
-            background: #455c74;
-            box-shadow: inset;
-            box-shadow: -6px -15px 15px -3px rgba(0, 128, 255, 0.164);
-            height: auto;
+        40% {
+          transform: translateY(-3px);
+          opacity: 1;
         }
+      }
 
-        .title {
-            color: white;
-        }
+      .intro {
+        font-size: 15px;
+        color: #ffff;
+        margin-left: 30px;
+        letter-spacing: 1px;
+      }
 
-        li {
-            float: right;
-        }
-
-        .RSUlogo {
-            width: 35px;
-            height: 35px;
-            opacity: 1;
-            float: left;
-            display: flex;
-            text-align: center;
-            margin-top: 15px;
-            margin-left: 20px;
-            text-decoration: none
-        }
-
-        .RSU {
-            float: left;
-            color: white;
-            font-style: inherit;
-            font-size: larger;
-            display: block;
-            text-align: center;
-            padding: 10px;
-            text-decoration: none;
-        }
-
-        li a {
-            display: block;
-            color: white;
-            text-align: center;
-            padding: 14px 16px;
-            text-decoration: none;
-        }
-
-        li a:hover {
-            color: #4d2545;
-        }
-
-
-        h1 {
-            color: White;
-            margin-left: 30px;
-        }
-
-        h4 {
-            color: white;
-            margin-left: 30px;
-        }
-
-
-
-        .footer {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 3px;
-            background-image: linear-gradient(to bottom, #61204d, #581945);
-        }
-
-        .foterImg {
-            display: flex;
-            align-items: center;
-            gap: 50px;
-        }
-
-        .footerword {
-            color: white;
-        }
-
-        .highlight {
-            color: green;
-        }
-
+      .active {
+        color: #4d2545;
+      }
+      @media screen and (max-width: 600px) {
         .container {
-            width: min(900px, 95%);
-            height: 70vh;
-            border-radius: 20px;
-            background-color: #526379;
-            display: flex;
-            flex-direction: column;
-            margin: 16px auto;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.25);
-            overflow: hidden;
+          width: 95%;
+          height: 70vh;
+          border-radius: 20px;
+          background-color: #526379;
+          display: flex;
+          flex-direction: column;
+          margin: 16px auto;
         }
-
-        /* Chat UI */
-        .chat-wrapper { /* inner layout */
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            background: linear-gradient(180deg, rgba(82,99,121,0.95), rgba(69,92,116,0.9));
-        }
-
-        .chat-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            color: #fff;
-            border-bottom: 1px solid rgba(255,255,255,0.12);
-            background: rgba(0,0,0,0.12);
-            position: sticky;
-            top: 0;
-            z-index: 2;
-        }
-        .chat-header .avatar {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            background: #e8eef7;
-            color: #1e293b;
-            display: grid;
-            place-items: center;
-            font-size: 14px;
-            font-weight: 700;
-        }
-        .chat-title { font-weight: 700; letter-spacing: .3px; }
-        .chat-subtitle { font-size: 12px; opacity: .9; }
-
-        .messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 16px 16px 8px 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .msg { display: flex; align-items: flex-end; gap: 8px; }
-        .msg.user { justify-content: flex-end; }
-        .msg.bot { justify-content: flex-start; }
-
-        .msg .avatar {
-            width: 28px; height: 28px; border-radius: 50%;
-            background: #e8eef7; color: #0f172a; display: grid; place-items: center;
-            font-size: 13px; font-weight: 700; flex: 0 0 28px;
-        }
-        .msg.user .avatar { background: #4c7cf3; color: #fff; }
-
-        .bubble {
-            max-width: 70%;
-            padding: 10px 12px;
-            border-radius: 16px;
-            line-height: 1.45;
-            word-wrap: break-word;
-            white-space: pre-wrap;
-        }
-        .msg.user .bubble {
-            background: #4c7cf3;
-            color: #fff;
-            border-bottom-right-radius: 6px;
-        }
-        .msg.bot .bubble {
-            background: #e8eef7;
-            color: #0f172a;
-            border-bottom-left-radius: 6px;
-        }
-        .timestamp { font-size: 11px; opacity: .8; margin-top: 4px; }
-
-        /* Quick question pills */
-        .quick-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            padding: 8px 16px 4px 16px;
-            background: rgba(0,0,0,0.08);
-            border-bottom: 1px solid rgba(255,255,255,0.08);
-        }
-        .quick-btn {
-            background: #314a62;
-            color: #fff;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 14px;
-            font-size: 12.5px;
-            cursor: pointer;
-            line-height: 1.2;
-            transition: background .18s, transform .18s;
-            letter-spacing: .3px;
-        }
-        .quick-btn:hover { background:#3f607f; }
-        .quick-btn:active { transform: scale(.95); }
-
-        .input-bar {
-            display: flex;
-            gap: 8px;
-            padding: 10px;
-            border-top: 1px solid rgba(255,255,255,0.12);
-            background: rgba(0,0,0,0.12);
-            position: sticky;
-            bottom: 0;
-        }
-        #chatInput {
-            flex: 1;
-            resize: none;
-            max-height: 120px;
-            min-height: 44px;
-            padding: 10px 12px;
-            border-radius: 12px;
-            border: none;
-            outline: none;
-            font-size: 15px;
-        }
-        #sendBtn {
-            background: #4c7cf3;
-            color: #fff;
-            border: none;
-            border-radius: 10px;
-            padding: 0 14px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-        #sendBtn[disabled], #chatInput[disabled] { opacity: .6; cursor: not-allowed; }
-
-        /* typing indicator */
-        .typing { display: inline-flex; gap: 4px; }
-        .typing span { width: 6px; height: 6px; background: #64748b; border-radius: 50%; display: inline-block; opacity: .6; animation: blink 1.2s infinite; }
-        .typing span:nth-child(2){ animation-delay: .15s; }
-        .typing span:nth-child(3){ animation-delay: .3s; }
-        @keyframes blink { 0%, 80%, 100% { transform: translateY(0); opacity: .4;} 40% { transform: translateY(-3px); opacity: 1; } }
 
         .intro {
-            font-size: 15px;
-            color: #FFFF;
-            margin-left: 30px;
-            letter-spacing: 1px;
-
+          font-size: 20px;
+          color: #ffff;
+          margin-left: 30px;
+          letter-spacing: 1px;
         }
-
-        .active {
-            color: #4d2545;
-        }
-        @media screen and (max-width: 600px){
-            .container {
-            width: 95%;
-            height: 70vh;
-            border-radius: 20px;
-            background-color: #526379;
-            display: flex;
-            flex-direction: column;
-            margin: 16px auto;
-            }
-
-            .intro {
-            font-size: 20px;
-            color: #FFFF;
-            margin-left: 30px;
-            letter-spacing: 1px;
-
-        
-        }
-    
-
-    }
-    @media screen and (min-width: 1000px){
+      }
+      @media screen and (min-width: 1000px) {
         .container {
-            width: min(900px, 80%);
-            height: 70vh;
-            border-radius: 20px;
-            background-color: #526379;
-            display: flex;
-            flex-direction: column;
-            margin: 16px auto;
+          width: min(900px, 80%);
+          height: 70vh;
+          border-radius: 20px;
+          background-color: #526379;
+          display: flex;
+          flex-direction: column;
+          margin: 16px auto;
         }
 
-            .intro {
-            font-size: 15px;
-            color: #FFFF;
-            margin-left: 30px;
-            letter-spacing: 1px;
-
-        
+        .intro {
+          font-size: 15px;
+          color: #ffff;
+          margin-left: 30px;
+          letter-spacing: 1px;
         }
-    }
-     @media screen and (min-width: 1024px){
+      }
+      @media screen and (min-width: 1024px) {
         .container {
-            width: 80%;
-            height: 70vh;
-            border-radius: 20px;
-            background-color: #526379;
-            display: flex;
-            flex-direction: column;
-            margin: 16px auto;
+          width: 80%;
+          height: 70vh;
+          border-radius: 20px;
+          background-color: #526379;
+          display: flex;
+          flex-direction: column;
+          margin: 16px auto;
         }
 
-            .intro {
-            font-size: 20px;
-            color: #FFFF;
-            margin-left: 30px;
-            letter-spacing: 1px;
-
-        
+        .intro {
+          font-size: 20px;
+          color: #ffff;
+          margin-left: 30px;
+          letter-spacing: 1px;
         }
-    }
-         @media screen and (min-width:762px) {
-            .container {
-                width: 80%;
-                height: 70vh;
-                border-radius: 20px;
-                background-color: #526379;
-                display: flex;
-                flex-direction: column;
-                margin: 16px auto;
-            }
-
-            .intro {
-                font-size: 20px;
-                color: #FFFF;
-                margin-left: 30px;
-                letter-spacing: 1px;
-
-
-            }
+      }
+      @media screen and (min-width: 762px) {
+        .container {
+          width: 80%;
+          height: 70vh;
+          border-radius: 20px;
+          background-color: #526379;
+          display: flex;
+          flex-direction: column;
+          margin: 16px auto;
         }
-        
-     
+
+        .intro {
+          font-size: 20px;
+          color: #ffff;
+          margin-left: 30px;
+          letter-spacing: 1px;
+        }
+      }
     </style>
-</head>
+  </head>
 
-<body>
-
-
-
+  <body>
     <ul>
-        <li><a href="../Feedback/Feedback.html">Feedback</a></li>
-        <li><a class="active" href="../Ask a question/ask questions.html">Ask A Question</a></li>
-        <li><a href="../FAQ List/FAQ List.html">FAQ List</a></li>
-        <li><a href="../Home/home.html">Home</a></li>
+      <li><a href="../Feedback/Feedback.html">Feedback</a></li>
+      <li>
+        <a class="active" href="../Ask a question/ask questions.html"
+          >Ask A Question</a
+        >
+      </li>
+      <li><a href="../FAQ List/FAQ List.html">FAQ List</a></li>
+      <li><a href="../Home/home.html">Home</a></li>
 
-
-        <li class="RSUlogo"><img src="../FAQ List/image/rsu logo.png" alt="Logo"></li>
-        <li class="RSU"><b><a href="../Home/home.html">RIC Gaming Club</a></b></li>
+      <li class="RSUlogo">
+        <img src="../FAQ List/image/rsu logo.png" alt="Logo" />
+      </li>
+      <li class="RSU">
+        <b><a href="../Home/home.html">RIC Gaming Club</a></b>
+      </li>
     </ul>
-    <br>
-    <br>
+    <br />
+    <br />
 
     <div class="intro">
-        Here you can ask question of your choice and our GPT API will try to answer your questions to the best of its
-        abilities. <br> <br>
+      Here you can ask question of your choice and our GPT API will try to
+      answer your questions to the best of its abilities. <br />
+      <br />
 
-        Note that since answers are generated by AI, they may not be fully accurate. You can check the accurate Q&A
-        approved by our club on <a class="highlight" href="../FAQ List/FAQ List.html"> FAQ list</a>
-        <br> Press Enter To Submit Your Question <br>
-        <br><br><br><br>
+      Note that since answers are generated by AI, they may not be fully
+      accurate. You can check the accurate Q&A approved by our club on
+      <a class="highlight" href="../FAQ List/FAQ List.html"> FAQ list</a> <br />
+      Press Enter To Submit Your Question <br />
+      <br /><br /><br /><br />
     </div>
 
     <div class="container">
-        <div class="chat-wrapper" role="region" aria-label="Chat with RIC Bot">
-            <div class="chat-header">
-                <div class="avatar" aria-hidden="true">RB</div>
-                <div>
-                    <div class="chat-title">RIC Bot</div>
-                    <div class="chat-subtitle">Ask anything about RIC Gaming Club</div>
-                </div>
-            </div>
-            <div class="quick-actions" aria-label="Quick questions">
-                <button type="button" class="quick-btn" data-q="Members Of The Club">Members Of The Club</button>
-                <button type="button" class="quick-btn" data-q="Objectives">Objectives</button>
-                <button type="button" class="quick-btn" data-q="How to Join">How to Join</button>
-            </div>
-            <div id="messages" class="messages" aria-live="polite" aria-atomic="false"></div>
-            <form id="chatForm" class="input-bar" autocomplete="off">
-                <textarea id="chatInput" placeholder="Message RIC Bot... (Shift+Enter for new line)" rows="1" aria-label="Message input"></textarea>
-                <button id="sendBtn" type="submit" aria-label="Send message">Send</button>
-            </form>
+      <div class="chat-wrapper" role="region" aria-label="Chat with RIC Bot">
+        <div class="chat-header">
+          <div class="avatar" aria-hidden="true">RB</div>
+          <div>
+            <div class="chat-title">RIC Bot</div>
+            <div class="chat-subtitle">Ask anything about RIC Gaming Club</div>
+          </div>
         </div>
+        <div class="quick-actions" aria-label="Quick questions">
+          <button type="button" class="quick-btn" data-q="Members Of The Club">
+            Members Of The Club
+          </button>
+          <button type="button" class="quick-btn" data-q="Objectives">
+            Objectives
+          </button>
+          <button type="button" class="quick-btn" data-q="How to Join">
+            How to Join
+          </button>
+        </div>
+        <div
+          id="messages"
+          class="messages"
+          aria-live="polite"
+          aria-atomic="false"
+        ></div>
+        <form id="chatForm" class="input-bar" autocomplete="off">
+          <textarea
+            id="chatInput"
+            placeholder="Message RIC Bot... (Shift+Enter for new line)"
+            rows="1"
+            aria-label="Message input"
+          ></textarea>
+          <button id="sendBtn" type="submit" aria-label="Send message">
+            Send
+          </button>
+        </form>
+      </div>
     </div>
 
     <div id="consoleOutput"></div>
-    <br><br><br><br>
+    <br /><br /><br /><br />
 
     <div class="footer">
-        <br>
-        <br>
-        <div class="foterImg">
-            <div>
-                <a href="https://www.facebook.com/profile.php?id=100014915112605&mibextid=LQQJ4d">
-                    <img src="../FAQ List/image/facebook.png" alt="facebook">
-                </a>
-            </div>
-            <div>
-                <a href="https://line.me/ti/p/aq6ANcv3au">
-                    <img src="../FAQ List/image/line.png" alt="line">
-                </a>
-            </div>
-            <div>
-                <a href="mailto:np.thukhaminthwin@gmail.com" alt="Gmail">
-                    <img src="../FAQ List/image/gmail.png" alt="line">
-                </a>
-            </div>
+      <br />
+      <br />
+      <div class="foterImg">
+        <div>
+          <a
+            href="https://www.facebook.com/profile.php?id=100014915112605&mibextid=LQQJ4d"
+          >
+            <img src="../FAQ List/image/facebook.png" alt="facebook" />
+          </a>
         </div>
-        <br>
-        <br>
-        <div class="footerword"><B>@Copyright. All rights reserved.</B></div>
-        <br>
+        <div>
+          <a href="https://line.me/ti/p/aq6ANcv3au">
+            <img src="../FAQ List/image/line.png" alt="line" />
+          </a>
+        </div>
+        <div>
+          <a href="mailto:np.thukhaminthwin@gmail.com" alt="Gmail">
+            <img src="../FAQ List/image/gmail.png" alt="line" />
+          </a>
+        </div>
+      </div>
+      <br />
+      <br />
+      <div class="footerword"><b>@Copyright. All rights reserved.</b></div>
+      <br />
     </div>
 
-    
-    <!-- Load config before main script; non-module for wider compatibility -->
-    <script src="./config.js"></script>
-   <script>
-       const API_KEY = (window.CONFIG && window.CONFIG.API_KEY) || null;
-       if(!API_KEY || API_KEY === 'REPLACE_WITH_YOUR_API_KEY') {
-           console.warn('Missing or placeholder API key; chat will respond with local seed answers only.');
-       }
+    <script type="module">
+      import { CONFIG } from "./config.js";
+      const API_KEY = CONFIG.API_KEY;
 
-        const PREFERRED = [
-            "gemini-2.5-flash",
-            "gemini-2.0-flash",
-            "gemini-1.5-flash",
-            "gemini-1.5-pro"
-        ];
+      const PREFERRED = [
+        "gemini-2.5-flash",
+        "gemini-2.0-flash",
+        "gemini-1.5-flash",
+        "gemini-1.5-pro",
+      ];
 
-        let resolvedModel = null;
-        let apiVersion = "v1";
+      let resolvedModel = null;
+      let apiVersion = "v1";
 
-        function shortName(full) {
-            return full.startsWith("models/") ? full.slice(7) : full;
+      function shortName(full) {
+        return full.startsWith("models/") ? full.slice(7) : full;
+      }
+      function toModelPath(name) {
+        return name.startsWith("models/") ? name : "models/" + name;
+      }
+
+      async function listModels(version) {
+        const url = `https://generativelanguage.googleapis.com/${version}/models?key=${API_KEY}`;
+        const r = await fetch(url);
+        if (!r.ok) throw new Error(`ListModels ${version} HTTP ${r.status}`);
+        const data = await r.json();
+        return (data.models || []).map((m) => ({
+          full: m.name,
+          short: shortName(m.name),
+          methods: m.supportedGenerationMethods || [],
+        }));
+      }
+
+      async function resolveModel() {
+        let models;
+        try {
+          models = await listModels("v1");
+          apiVersion = "v1";
+        } catch {
+          models = await listModels("v1beta");
+          apiVersion = "v1beta";
         }
-        function toModelPath(name) {
-            return name.startsWith("models/") ? name : "models/" + name;
+        // Prefer ordered
+        for (const pref of PREFERRED) {
+          const found = models.find(
+            (m) => m.short === pref && m.methods.includes("generateContent")
+          );
+          if (found) return found.short;
+        }
+        // Any generateContent
+        const any = models.find((m) => m.methods.includes("generateContent"));
+        if (any) return any.short;
+        throw new Error("No accessible model with generateContent.");
+      }
+
+      const seedPairs = [
+        [
+          "Objective, What are the club's objectives? What is the objective of the club? Can You Tell Me about the club's objective?",
+          "The objective of the gaming club is to provide a place to share gaming hobbies comfortably and compete in esports tournaments if possible.",
+        ],
+        [
+          "Who are your members? Who are the members of the club? Who are the members of the gaming club?",
+          "Members: Thukha Minthwin, Htin Lynn Kyaw, Hein Thuya Win, TunBhone PyaeMoe, Phyo Thwe Thwe Kyaw, Thant Wai Yan Linn, Enes Talha Ciftci.",
+        ],
+        [
+          "Requirements, What are the requirements to join the club?",
+          "No strict requirements. Interest in games and sharing with others is enough.",
+        ],
+        [
+          "Who is the club's president? Who is the club's Vice President? President? Vice President?",
+          "President: Thukha Minthwin (ICT 65). Vice President: TunBhone PyaeMoe (ICT 65).",
+        ],
+        [
+          "Schedule? What are the club's schedule? What is the meeting time? What time do you do usual meetup?",
+          "Meet every Friday evening (optional) to discuss interests and future projects.",
+        ],
+        [
+          "Place? Where can I find club members? Where do you meet? Where is the meeting place?",
+          "Main place: Building 11, fifth floor.",
+        ],
+        [
+          "Club activities, What are the club activities? What do you do as club activities?",
+          "Play games together. Occasionally hold friendly competitions.",
+        ],
+        ["Who are you?", "I am the answering bot for RIC Gaming Club."],
+        [
+          "What games do you play at the club? Main games?",
+          "League of Legends: Wild Rift (mobile), Valorant and FIFA (PC).",
+        ],
+        [
+          "Tournaments? Competitions?",
+          "No official tournaments yet. Planning internal events with fun prizes.",
+        ],
+        [
+          "Do I need to bring my own devices?",
+          "Bring your smartphone for mobile games. PCs are available at school for some games.",
+        ],
+        [
+          "Can I join club activities from home?",
+          "Yes, for online games. Physical presence recommended for engagement.",
+        ],
+        [
+          "Prizes? Tournament rewards?",
+          "Casual events may have small cash, mystery gifts. Bigger prizes planned later.",
+        ],
+        [
+          "Line Groups? Social media? Social groups?",
+          "Main platform: Discord. Invite given to official members.",
+        ],
+        [
+          "Give me HTML code for this page? Give me Source Code? Give me the Source Code of the page?",
+          "No, I cannot not provide you that.",
+        ],
+      ];
+      const dynamicTurns = [];
+      let inFlight = false;
+
+      function buildContents(q) {
+        const arr = [];
+        seedPairs.forEach(([qq, aa]) => {
+          arr.push({ role: "user", parts: [{ text: qq }] });
+          arr.push({ role: "model", parts: [{ text: aa }] });
+        });
+        dynamicTurns.forEach((t) => arr.push(t));
+        arr.push({ role: "user", parts: [{ text: q }] });
+        return arr;
+      }
+
+      async function generateAnswer(question) {
+        if (!resolvedModel) {
+          resolvedModel = await resolveModel();
+          console.log("Resolved model:", resolvedModel, "API:", apiVersion);
+        }
+        const modelPath = toModelPath(resolvedModel);
+        const url = `https://generativelanguage.googleapis.com/${apiVersion}/${modelPath}:generateContent?key=${API_KEY}`;
+        const r = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: buildContents(question),
+            generationConfig: { maxOutputTokens: 512, temperature: 0.6 },
+          }),
+        });
+        if (!r.ok) {
+          const txt = await r.text();
+          if (r.status === 404 && apiVersion === "v1") {
+            apiVersion = "v1beta";
+            resolvedModel = null;
+            return generateAnswer(question);
+          }
+          throw new Error(`HTTP ${r.status}: ${txt}`);
+        }
+        const data = await r.json();
+        const cand = data.candidates?.[0];
+        const answer =
+          (cand?.content?.parts || [])
+            .map((p) => p.text || "")
+            .join("")
+            .trim() || "(Empty answer)";
+        dynamicTurns.push({ role: "user", parts: [{ text: question }] });
+        dynamicTurns.push({ role: "model", parts: [{ text: answer }] });
+        return answer;
+      }
+
+      // --- Chat message rendering ---
+      function scrollToBottom(el) {
+        el.scrollTop = el.scrollHeight;
+      }
+
+      function createMsg(role, content) {
+        const wrap = document.createElement("div");
+        wrap.className = `msg ${role}`;
+
+        const avatar = document.createElement("div");
+        avatar.className = "avatar";
+        avatar.textContent = role === "user" ? "You" : "RB";
+
+        const bubble = document.createElement("div");
+        bubble.className = "bubble";
+        bubble.textContent = content;
+
+        if (role === "user") {
+          // user: bubble then avatar (right aligned)
+          wrap.appendChild(bubble);
+          wrap.appendChild(avatar);
+        } else {
+          // bot: avatar then bubble (left aligned)
+          wrap.appendChild(avatar);
+          wrap.appendChild(bubble);
+        }
+        return { wrap, bubble };
+      }
+
+      function showTyping(container) {
+        const { wrap, bubble } = createMsg("bot", "");
+        const dots = document.createElement("div");
+        dots.className = "typing";
+        dots.innerHTML = "<span></span><span></span><span></span>";
+        bubble.appendChild(dots);
+        container.appendChild(wrap);
+        scrollToBottom(container);
+        return { wrap, bubble };
+      }
+
+      function setDisabled(disabled) {
+        document.getElementById("chatInput").disabled = disabled;
+        document.getElementById("sendBtn").disabled = disabled;
+      }
+
+      (function init() {
+        const messages = document.getElementById("messages");
+        const form = document.getElementById("chatForm");
+        const input = document.getElementById("chatInput");
+        const quickButtons = document.querySelectorAll(".quick-btn");
+
+        // Auto-resize textarea
+        function autoresize() {
+          input.style.height = "auto";
+          input.style.height = Math.min(input.scrollHeight, 120) + "px";
+        }
+        input.addEventListener("input", autoresize);
+
+        // Resolve model and show system line
+        resolveModel()
+          .then((m) => {
+            resolvedModel = m; /* silently resolved model */
+          })
+          .catch((e) => {
+            const { wrap } = createMsg(
+              "bot",
+              `Model resolution error: ${e.message}`
+            );
+            messages.appendChild(wrap);
+            scrollToBottom(messages);
+          });
+
+        // Submit on Enter (not Shift+Enter)
+        input.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            form.requestSubmit();
+          }
+        });
+
+        async function sendQuestion(q) {
+          if (!q || inFlight) return;
+          inFlight = true;
+          setDisabled(true);
+          const userMsg = createMsg("user", q);
+          messages.appendChild(userMsg.wrap);
+          scrollToBottom(messages);
+          input.value = "";
+          autoresize();
+          const typing = showTyping(messages);
+          try {
+            const ans = await generateAnswer(q);
+            typing.bubble.textContent = ans;
+          } catch (err) {
+            typing.bubble.textContent = `Error: ${err.message}`;
+            typing.bubble.style.color = "red";
+          } finally {
+            inFlight = false;
+            setDisabled(false);
+            input.focus();
+          }
         }
 
-        async function listModels(version) {
-            const url = `https://generativelanguage.googleapis.com/${version}/models?key=${API_KEY}`;
-            const r = await fetch(url);
-            if (!r.ok) throw new Error(`ListModels ${version} HTTP ${r.status}`);
-            const data = await r.json();
-            return (data.models || []).map(m => ({
-                full: m.name,
-                short: shortName(m.name),
-                methods: m.supportedGenerationMethods || []
-            }));
-        }
+        form.addEventListener("submit", (e) => {
+          e.preventDefault();
+          sendQuestion(input.value.trim());
+        });
 
-        async function resolveModel() {
-            let models;
-            try {
-                models = await listModels("v1");
-                apiVersion = "v1";
-            } catch {
-                models = await listModels("v1beta");
-                apiVersion = "v1beta";
-            }
-            // Prefer ordered
-            for (const pref of PREFERRED) {
-                const found = models.find(m => m.short === pref && m.methods.includes("generateContent"));
-                if (found) return found.short;
-            }
-            // Any generateContent
-            const any = models.find(m => m.methods.includes("generateContent"));
-            if (any) return any.short;
-            throw new Error("No accessible model with generateContent.");
-        }
-
-        const seedPairs = [
-            ["Objective, What are the club's objectives? What is the objective of the club? Can You Tell Me about the club's objective?",
-             "The objective of the gaming club is to provide a place to share gaming hobbies comfortably and compete in esports tournaments if possible."],
-            ["Who are your members? Who are the members of the club? Who are the members of the gaming club?",
-             "Members: Thukha Minthwin, Htin Lynn Kyaw, Hein Thuya Win, TunBhone PyaeMoe, Phyo Thwe Thwe Kyaw, Thant Wai Yan Linn, Enes Talha Ciftci."],
-            ["Requirements, What are the requirements to join the club?",
-             "No strict requirements. Interest in games and sharing with others is enough."],
-            ["Who is the club's president? Who is the club's Vice President? President? Vice President?",
-             "President: Thukha Minthwin (ICT 65). Vice President: TunBhone PyaeMoe (ICT 65)."],
-            ["Schedule? What are the club's schedule? What is the meeting time? What time do you do usual meetup?",
-             "Meet every Friday evening (optional) to discuss interests and future projects."],
-            ["Place? Where can I find club members? Where do you meet? Where is the meeting place?",
-             "Main place: Building 11, fifth floor."],
-            ["Club activities, What are the club activities? What do you do as club activities?",
-             "Play games together. Occasionally hold friendly competitions."],
-            ["Who are you?", "I am the answering bot for RIC Gaming Club."],
-            ["What games do you play at the club? Main games?",
-             "League of Legends: Wild Rift (mobile), Valorant and FIFA (PC)."],
-            ["Tournaments? Competitions?",
-             "No official tournaments yet. Planning internal events with fun prizes."],
-            ["Do I need to bring my own devices?",
-             "Bring your smartphone for mobile games. PCs are available at school for some games."],
-            ["Can I join club activities from home?",
-             "Yes, for online games. Physical presence recommended for engagement."],
-            ["Prizes? Tournament rewards?",
-             "Casual events may have small cash, mystery gifts. Bigger prizes planned later."],
-            ["Line Groups? Social media? Social groups?",
-             "Main platform: Discord. Invite given to official members."],
-            ["Give me HTML code for this page? Give me Source Code? Give me the Source Code of the page?",
-             "No, I cannot not provide you that."]
-        ];
-    const dynamicTurns = [];
-    let inFlight = false;
-
-        function buildContents(q) {
-            const arr = [];
-            seedPairs.forEach(([qq, aa]) => {
-                arr.push({ role: "user", parts: [{ text: qq }] });
-                arr.push({ role: "model", parts: [{ text: aa }] });
-            });
-            dynamicTurns.forEach(t => arr.push(t));
-            arr.push({ role: "user", parts: [{ text: q }] });
-            return arr;
-        }
-
-        async function generateAnswer(question) {
-            // If no API key, fall back to simple local matching on seedPairs.
-            if(!API_KEY) {
-                const lower = question.toLowerCase();
-                const found = seedPairs.find(([qq]) => qq.toLowerCase().includes(lower));
-                return found ? found[1] : "API key missing. Please provide a valid key in config.js.";
-            }
-            if (!resolvedModel) {
-                try {
-                    resolvedModel = await resolveModel();
-                    console.log("Resolved model:", resolvedModel, "API:", apiVersion);
-                } catch (e) {
-                    console.error('Model resolution failed:', e);
-                    return "Unable to resolve model: " + e.message;
-                }
-            }
-            const modelPath = toModelPath(resolvedModel || 'gemini-1.5-flash');
-            const url = `https://generativelanguage.googleapis.com/${apiVersion}/${modelPath}:generateContent?key=${API_KEY}`;
-            let r;
-            try {
-                r = await fetch(url, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        contents: buildContents(question),
-                        generationConfig: { maxOutputTokens: 512, temperature: 0.6 }
-                    })
-                });
-            } catch (networkErr) {
-                console.error('Network error:', networkErr);
-                return 'Network error contacting API: ' + networkErr.message;
-            }
-            if (!r.ok) {
-                const txt = await r.text();
-                if (r.status === 404 && apiVersion === "v1") {
-                    apiVersion = "v1beta";
-                    resolvedModel = null;
-                    return generateAnswer(question);
-                }
-                return `API error (${r.status}): ${txt}`;
-            }
-            const data = await r.json();
-            const cand = data.candidates?.[0];
-            const answer = (cand?.content?.parts || []).map(p => p.text || "").join("").trim() || "(Empty answer)";
-            dynamicTurns.push({ role: "user", parts: [{ text: question }] });
-            dynamicTurns.push({ role: "model", parts: [{ text: answer }] });
-            return answer;
-        }
-
-        // --- Chat message rendering ---
-        function scrollToBottom(el){ el.scrollTop = el.scrollHeight; }
-
-        function createMsg(role, content){
-            const wrap = document.createElement('div');
-            wrap.className = `msg ${role}`;
-
-            const avatar = document.createElement('div');
-            avatar.className = 'avatar';
-            avatar.textContent = role === 'user' ? 'You' : 'RB';
-
-            const bubble = document.createElement('div');
-            bubble.className = 'bubble';
-            bubble.textContent = content;
-
-            if (role === 'user') {
-                // user: bubble then avatar (right aligned)
-                wrap.appendChild(bubble);
-                wrap.appendChild(avatar);
-            } else {
-                // bot: avatar then bubble (left aligned)
-                wrap.appendChild(avatar);
-                wrap.appendChild(bubble);
-            }
-            return { wrap, bubble };
-        }
-
-        function showTyping(container){
-            const { wrap, bubble } = createMsg('bot', '');
-            const dots = document.createElement('div');
-            dots.className = 'typing';
-            dots.innerHTML = '<span></span><span></span><span></span>';
-            bubble.appendChild(dots);
-            container.appendChild(wrap);
-            scrollToBottom(container);
-            return { wrap, bubble };
-        }
-
-        function setDisabled(disabled){
-            document.getElementById('chatInput').disabled = disabled;
-            document.getElementById('sendBtn').disabled = disabled;
-        }
-
-        (function init() {
-            const messages = document.getElementById('messages');
-            const form = document.getElementById('chatForm');
-            const input = document.getElementById('chatInput');
-            const quickButtons = document.querySelectorAll('.quick-btn');
-
-            // Auto-resize textarea
-            function autoresize(){
-                input.style.height = 'auto';
-                input.style.height = Math.min(input.scrollHeight, 120) + 'px';
-            }
-            input.addEventListener('input', autoresize);
-
-            // Resolve model silently if API key present
-            if(API_KEY) {
-                resolveModel()
-                    .then(m => { resolvedModel = m; })
-                    .catch(e => { const { wrap } = createMsg('bot', `Model resolution error: ${e.message}`); messages.appendChild(wrap); scrollToBottom(messages); });
-            } else {
-                const { wrap } = createMsg('bot', 'No API key configured. Using basic local answers.');
-                messages.appendChild(wrap); scrollToBottom(messages);
-            }
-
-            // Submit on Enter (not Shift+Enter)
-            input.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    form.requestSubmit();
-                }
-            });
-
-            async function sendQuestion(q){
-                if (!q || inFlight) return;
-                inFlight = true; setDisabled(true);
-                const userMsg = createMsg('user', q);
-                messages.appendChild(userMsg.wrap);
-                scrollToBottom(messages);
-                input.value = '';
-                autoresize();
-                const typing = showTyping(messages);
-                try {
-                    const ans = await generateAnswer(q);
-                    typing.bubble.textContent = ans;
-                } catch (err) {
-                    typing.bubble.textContent = `Error: ${err.message}`;
-                    typing.bubble.style.color = 'red';
-                } finally {
-                    inFlight = false; setDisabled(false); input.focus();
-                }
-            }
-
-            form.addEventListener('submit', (e) => {
-                e.preventDefault();
-                sendQuestion(input.value.trim());
-            });
-
-            quickButtons.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const q = btn.getAttribute('data-q');
-                    sendQuestion(q);
-                });
-            });
-        })();
+        quickButtons.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const q = btn.getAttribute("data-q");
+            sendQuestion(q);
+          });
+        });
+      })();
     </script>
-
-</body>
-
+  </body>
 </html>
